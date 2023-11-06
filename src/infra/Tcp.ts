@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import express from 'express';
+const express = require('express');
 import { useExpressServer } from 'routing-controllers';
 
 import { IService } from 'types/services';
