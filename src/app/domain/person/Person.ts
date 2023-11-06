@@ -1,16 +1,18 @@
-import { JsonController, Get, Post, Body, Param} from 'routing-controllers';
+import { JsonController, Get, Post, Body, Param, UseAfter} from 'routing-controllers';
 import { validate } from 'class-validator';
 
 import { IPerson } from "./Person.types";
 import { ApiResponse } from 'helpers/ApiResponse';
 import { ApiError } from 'helpers/ApiError';
 import { CreatePerson } from './CreatePerson.dto';
+import { HttpLoggerResponse } from 'app/middleware/HttpLoggerResponse'; 
 
 const storeData: IPerson[] = [];
 
 @JsonController('/person')
 export default class Person {
     @Get()
+    @UseAfter(HttpLoggerResponse)
     async getAll () {
         return new ApiResponse(true, storeData);
     };
@@ -35,7 +37,7 @@ export default class Person {
     async setPerson (@Body() body: CreatePerson) {
         const errors = await validate(body);
 
-        if(errors.length > 0) {
+        if(errors.length < 0) {
             throw new ApiError(400, {
                 message: "Validation failed",
                 code: "PERSON_VALIDATION_ERROR",
